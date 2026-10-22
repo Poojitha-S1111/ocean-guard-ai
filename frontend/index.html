@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OceanGuard AI – Marine Pollution Monitoring & Investigation System</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Mandatory Top Decision-Support Banner -->
+  <div class="system-disclaimer-banner">
+    <div class="disclaimer-content">
+      <span class="pulse-indicator"></span>
+      <span class="disclaimer-badge">DECISION-SUPPORT NOTICE</span>
+      <span class="disclaimer-text">
+        <strong>Investigative Tool:</strong> Vessel rankings and backtrack trajectories are investigative leads, not proof of responsibility. Human verification and environmental ground-truthing required.
+      </span>
+    </div>
+  </div>
+
+  <!-- Header / Navigation -->
+  <header class="app-header">
+    <div class="nav-container">
+      <div class="brand">
+        <svg class="brand-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-title">OceanGuard <span class="accent">AI</span></span>
+          <span class="brand-sub">SAR Satellite Surveillance & Drift Backtracking</span>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a href="#hero">Overview</a>
+        <a href="#how-it-works">Pipeline</a>
+        <a href="#dashboard" class="nav-active">Interactive Operations</a>
+        <a href="#technologies">Tech Stack</a>
+        <a href="#limitations">Integrity</a>
+      </nav>
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <span class="status-label">Sentinel-1 SAR Feed Active</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 1. Hero Section -->
+    <section id="hero" class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">Next-Gen Maritime Decision Support</div>
+        <h1 class="hero-title">Protecting Oceans with Synthetic Aperture Radar & Forensic AI</h1>
+        <p class="hero-desc">
+          Automated dark-patch segmentation, capillary wave damping analysis, and hydrodynamic drift backtracking 
+          to identify candidate vessel leads in high-density international shipping lanes.
+        </p>
+        <div class="hero-cta">
+          <a href="#dashboard" class="btn btn-primary">Open Operations Console</a>
+          <button class="btn btn-secondary" onclick="document.getElementById('upload-modal').classList.add('active')">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Upload SAR Image
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-val">25m</span>
+            <span class="stat-lbl">Spatial Resolution</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val">&lt; 100ms</span>
+            <span class="stat-lbl">Patch Extraction</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val">4-Vector</span>
+            <span class="stat-lbl">Candidate Ranking</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-val">100%</span>
+            <span class="stat-lbl">Decision-Support Transparency</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Interactive Operations Dashboard Section -->
+    <section id="dashboard" class="dashboard-section">
+      <div class="dashboard-header">
+        <div>
+          <h2 class="section-title">Live Spill Investigation Console</h2>
+          <p class="section-subtitle">Real-time fusion of SAR anomaly polygons, hydrodynamic drift backtracking, and candidate AIS transits.</p>
+        </div>
+        <div class="dashboard-actions">
+          <button class="btn btn-sm btn-outline" id="btn-refresh-data" title="Reload SQLite data">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Refresh Feed
+          </button>
+          <button class="btn btn-sm btn-primary" id="btn-open-upload">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Upload SAR Image
+          </button>
+        </div>
+      </div>
+
+      <!-- 3-Column Operations Layout -->
+      <div class="ops-layout">
+        
+        <!-- Left Panel: Spill Detection Feed -->
+        <aside class="panel panel-left">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+              Detected Spills (<span id="spill-count">0</span>)
+            </div>
+            <span class="sample-tag">Sample data for demonstration</span>
+          </div>
+
+          <div class="spill-filter-bar">
+            <input type="text" id="spill-search" placeholder="Filter by name, ID or status..." class="input-search">
+          </div>
+
+          <div class="spill-list" id="spill-list-container">
+            <!-- Populated dynamically via JS -->
+            <div class="loading-state">Loading spill detections from SQLite...</div>
+          </div>
+        </aside>
+
+        <!-- Center Panel: Map & Timeline Animation -->
+        <div class="panel panel-center">
+          
+          <!-- Map Overlay Controls -->
+          <div class="map-controls-bar">
+            <div class="map-layers-toggle">
+              <label class="layer-chk"><input type="checkbox" id="chk-layer-spills" checked> <span class="layer-dot dot-spill"></span> Spill Polygons</label>
+              <label class="layer-chk"><input type="checkbox" id="chk-layer-drift" checked> <span class="layer-dot dot-drift"></span> Drift Path</label>
+              <label class="layer-chk"><input type="checkbox" id="chk-layer-source" checked> <span class="layer-dot dot-source"></span> Source Region</label>
+              <label class="layer-chk"><input type="checkbox" id="chk-layer-vessels" checked> <span class="layer-dot dot-vessels"></span> Candidate Tracks</label>
+            </div>
+            <div class="map-active-info" id="map-active-badge">
+              Select a spill to begin investigation
+            </div>
+          </div>
+
+          <!-- Leaflet Map Container -->
+          <div id="leaflet-map" class="map-view"></div>
+
+          <!-- Time Slider Bar for AIS Vessel Track Animation -->
+          <div class="time-slider-panel">
+            <div class="slider-header">
+              <div class="slider-title-group">
+                <span class="slider-label">AIS Temporal Scrubbing:</span>
+                <span class="slider-timestamp" id="slider-timestamp-label">2026-10-22 08:30 UTC (T-0)</span>
+              </div>
+              <div class="slider-controls">
+                <button class="btn-ctrl" id="btn-play-pause" title="Play / Pause Animation">▶ Play</button>
+                <button class="btn-ctrl" id="btn-reset-time" title="Reset to Spill Time">↺ Reset</button>
+                <span class="slider-speed" id="slider-speed-indicator">1x Speed</span>
+              </div>
+            </div>
+            <input type="range" id="time-slider" min="-16" max="6" value="0" step="1" class="custom-range">
+            <div class="slider-ticks">
+              <span>T-16h (Release Horizon)</span>
+              <span>T-12h</span>
+              <span>T-8h (Likely Window)</span>
+              <span>T-4h</span>
+              <span class="tick-highlight">T-0 (Detection)</span>
+              <span>T+6h</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Panel: Investigation Detail Tabs -->
+        <aside class="panel panel-right">
+          <div class="panel-tabs">
+            <button class="tab-btn active" data-tab="details">Overview</button>
+            <button class="tab-btn" data-tab="drift">Drift Vector</button>
+            <button class="tab-btn" data-tab="vessels">Candidate Vessels</button>
+            <button class="tab-btn" data-tab="history">Historical Log</button>
+          </div>
+
+          <div class="tab-content" id="tab-content-container">
+            <!-- Dynamic Content Injected Here -->
+            <div class="tab-pane active" id="pane-details">
+              <div class="empty-state">Select a detected spill from the left list to review forensic parameters.</div>
+            </div>
+          </div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- 3. How It Works (6-Stage Pipeline) -->
+    <section id="how-it-works" class="pipeline-section">
+      <div class="section-container">
+        <div class="section-head text-center">
+          <span class="badge">Forensic Methodology</span>
+          <h2 class="section-title">The 6-Stage Marine Pollution Pipeline</h2>
+          <p class="section-subtitle">From raw satellite backscatter to probabilistic candidate vessel investigation.</p>
+        </div>
+
+        <div class="pipeline-grid">
+          
+          <div class="pipeline-card">
+            <div class="step-num">01</div>
+            <h3 class="card-title">SAR Speckle Damping</h3>
+            <p class="card-body">Lee adaptive filter and multi-scale normalization eliminate Rayleigh speckle noise while preserving sharp edge boundaries of hydrocarbon damping zones.</p>
+            <div class="card-tag">cv2 + Lee Filter</div>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="step-num">02</div>
+            <h3 class="card-title">Dark-Patch Extraction</h3>
+            <p class="card-body">Dynamic ocean masking and adaptive thresholding isolate areas where capillary and short gravity waves are depressed by viscoelastic surfactant films.</p>
+            <div class="card-tag">Contour Segmentation</div>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="step-num">03</div>
+            <h3 class="card-title">ML Patch Classification</h3>
+            <p class="card-body">Extracts 9 morphological and GLCM texture features (elongation, contrast, energy). Scikit-learn Random Forest model calculates likelihood score vs biogenic look-alikes.</p>
+            <div class="card-tag">Random Forest (Scikit-Learn)</div>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="step-num">04</div>
+            <h3 class="card-title">Hydrodynamic Drift Backtracking</h3>
+            <p class="card-body">Inverts standard oceanographic drift: Net Vector = Ocean Current + ~3% Wind Speed. Reverses vectors hour-by-hour to derive the past trajectory and expanding source region.</p>
+            <div class="card-tag">NOAA GNOME Approximation</div>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="step-num">05</div>
+            <h3 class="card-title">Candidate Vessel Ranking</h3>
+            <p class="card-body">Fuses sample AIS tracks across 4 configurable sub-scores: Timing window, Haversine proximity, Trajectory traversal, and Drift-path alignment. Never identifies a "culprit".</p>
+            <div class="card-tag">Multivariate Scoring</div>
+          </div>
+
+          <div class="pipeline-card">
+            <div class="step-num">06</div>
+            <h3 class="card-title">Historical Correlation & Timeline</h3>
+            <p class="card-body">Cross-references spatial coordinates against SQLite archives to identify chronic illegal discharge hotspots, recurring corridors, and prior environmental baseline incidents.</p>
+            <div class="card-tag">SQLite Forensic Ledger</div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Technologies Section -->
+    <section id="technologies" class="tech-section">
+      <div class="section-container">
+        <div class="section-head text-center">
+          <span class="badge">Architecture</span>
+          <h2 class="section-title">Built with Production-Ready Open Standards</h2>
+        </div>
+        <div class="tech-grid">
+          <div class="tech-card">
+            <span class="tech-label">Backend</span>
+            <h4>FastAPI + Python 3.11</h4>
+            <p>High-throughput asynchronous REST API with strictly validated Pydantic v2 schemas and Uvicorn runtime.</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-label">Machine Learning</span>
+            <h4>Scikit-Learn + Joblib</h4>
+            <p>120-tree Random Forest classifier with GLCM texture metrics, cross-validated accuracy, and calibrated probabilities.</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-label">Computer Vision</span>
+            <h4>OpenCV + Scikit-Image</h4>
+            <p>Speckle noise filtering (Lee filter), morphology, graycomatrix GLCM texture statistics, and polygon simplification.</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-label">Geospatial UI</span>
+            <h4>Leaflet.js + CartoDB Dark</h4>
+            <p>High-performance vector rendering for slick polygons, uncertainty source buffers, and animated AIS tracks.</p>
+          </div>
+          <div class="tech-card">
+            <span class="tech-label">Storage</span>
+            <h4>SQLite Relational Database</h4>
+            <p>Lightweight, embedded persistence for spill records, historical incidents, and 24-hour AIS track telemetry.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Integrity & Limitations -->
+    <section id="limitations" class="limitations-section">
+      <div class="section-container">
+        <div class="limitations-card">
+          <div class="limitations-icon">⚠️</div>
+          <div>
+            <h3>Operational Scope & Decision-Support Limitations</h3>
+            <p>
+              OceanGuard AI is strictly an <strong>investigative decision-support system</strong>. 
+              Candidate vessel rankings reflect spatial and temporal correlation with backtracked drift envelopes, 
+              <strong>not physical proof of responsibility</strong>.
+            </p>
+            <ul class="limits-list">
+              <li><strong>Natural Look-alikes:</strong> Low-wind calm zones (&lt; 3 m/s), biogenic algal surfactants, internal waves, and rain squalls can mimic oil slick damping.</li>
+              <li><strong>AIS Gaps:</strong> Vessels can intentionally or unintentionally deactivate AIS transponders (dark vessels).</li>
+              <li><strong>Ground Truthing:</strong> Satellite leads must be corroborated with maritime patrol aircraft (SLAR/IR), vessel logbook inspections, and chemical oil fingerprinting.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Upload Modal -->
+  <div class="modal" id="upload-modal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">Upload SAR Satellite Image</h3>
+        <button class="btn-close" onclick="document.getElementById('upload-modal').classList.remove('active')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Upload a high-resolution SAR image (PNG/JPG) or select one of our pre-calibrated sample acquisitions for instant processing.</p>
+        
+        <div class="sample-picker">
+          <label class="picker-label">Or choose a pre-loaded sample SAR:</label>
+          <div class="sample-chips">
+            <button class="chip active" data-sample="sar_dover_pass_081.png">Dover Pass (Heavy Slick)</button>
+            <button class="chip" data-sample="sar_calais_pass_082.png">Calais Channel (Linear)</button>
+            <button class="chip" data-sample="sar_beachy_head_083.png">Beachy Head (Lookalike)</button>
+            <button class="chip" data-sample="sar_wight_pass_084.png">Wight Passage (Weathered)</button>
+          </div>
+        </div>
+
+        <div class="drop-zone" id="drop-zone">
+          <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+          <p>Drag & drop SAR image file here or <span class="accent-link">browse files</span></p>
+          <span class="file-hint">Supports PNG, JPG, TIFF (Max 20MB)</span>
+          <input type="file" id="file-input" accept="image/png, image/jpeg" style="display: none;">
+        </div>
+
+        <div class="geo-inputs">
+          <div class="input-group">
+            <label>Reference Latitude (°N)</label>
+            <input type="number" id="upload-ref-lat" value="50.450" step="0.001">
+          </div>
+          <div class="input-group">
+            <label>Reference Longitude (°E)</label>
+            <input type="number" id="upload-ref-lon" value="0.650" step="0.001">
+          </div>
+        </div>
+
+        <!-- Detection Results Preview in Modal -->
+        <div class="upload-results" id="upload-results-container" style="display: none;">
+          <h4>Detection & Validation Results</h4>
+          <div class="results-preview-grid">
+            <div>
+              <span class="preview-label">Original SAR</span>
+              <img id="preview-orig-img" class="img-preview" src="" alt="Original SAR">
+            </div>
+            <div>
+              <span class="preview-label">Detected Patch Overlay</span>
+              <img id="preview-overlay-img" class="img-preview" src="" alt="Overlay SAR">
+            </div>
+          </div>
+          <div class="validation-summary-box" id="modal-validation-summary">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="document.getElementById('upload-modal').classList.remove('active')">Close</button>
+        <button class="btn btn-primary" id="btn-submit-upload">Process SAR Image</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div class="footer-left">
+        <strong>OceanGuard AI Prototype</strong> – Marine Pollution Surveillance & Origin Investigation System.
+        <p class="sample-tag-footer">All data presented is generated sample data for demonstration purposes.</p>
+      </div>
+      <div class="footer-right">
+        <span>Decision-Support System v1.0.0</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Leaflet JS CDN -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  
+  <!-- App JS -->
+  <script src="/static/app.js"></script>
+</body>
+</html>
